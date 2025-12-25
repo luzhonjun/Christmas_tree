@@ -134,7 +134,7 @@
             <div class="setup-group">
                 <label class="setup-label">Add Photos (Multiple)</label>
                 <div class="file-input-wrapper">
-                    <button class="file-btn" id="photo-btn" onclick="document.getElementById('photo-input').click()">Select Images</button>
+                    <button class="file-btn" id="photo-btn" onclick="document.getElementById('photo-input').click()">Select Photos</button>
                     <input type="file" id="photo-input" multiple accept="image/*" style="display: none;" onchange="handleSetupFiles(this, 'photo-btn')">
                 </div>
             </div>
@@ -223,10 +223,17 @@
         function handleSetupFiles(input, btnId) {
             const btn = document.getElementById(btnId);
             if(input.files && input.files.length > 0) {
-                btn.classList.add('selected');
-                btn.innerText = `${input.files.length} File(s) Selected`;
+                // Mobile: Add new files to existing array instead of overwriting
                 if(btnId === 'photo-btn') {
-                    userPhotos = [];
+                     // Check if we are appending or replacing. For simplicity, let's append if user clicks again.
+                     // But typically input.files is the CURRENT selection only.
+                     // On mobile, users might want to pick 1 by 1. 
+                     // Strategy: We keep a global accumulation array 'userPhotos' and just APPEND new reads.
+                     
+                     // NOTE: userPhotos is cleared ONLY when 'init' or explicitly. 
+                     // Currently line 229: userPhotos = []; -> This CLEARS previous selection.
+                     // We should REMOVE that line to allow accumulation.
+                     
                     Array.from(input.files).forEach(file => {
                         const reader = new FileReader();
                         reader.onload = (e) => {
@@ -237,12 +244,17 @@
                                     src: e.target.result,
                                     aspect: img.width / img.height
                                 });
+                                // Update button text dynamically
+                                btn.innerText = `${userPhotos.length} Photo(s) Added`;
+                                btn.classList.add('selected');
                             };
                         };
                         reader.readAsDataURL(file);
                     });
                 } else if (btnId === 'music-btn') {
                     userAudio = input.files[0];
+                    btn.classList.add('selected');
+                    btn.innerText = "Music Selected";
                 }
             }
         }
