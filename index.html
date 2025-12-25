@@ -315,10 +315,14 @@
         function explodeComet(x, y) { for(let k=0; k<15; k++) { const ang = random(0, Math.PI*2); const spd = random(2, 8) * fwScale; particles.push(new Spark(x, y, Math.cos(ang)*spd, Math.sin(ang)*spd, true)); } }
         function resizeFireworks() { fwWidth = fwCanvas.width = window.innerWidth; fwHeight = fwCanvas.height = window.innerHeight; fwScale = Math.min(fwWidth, fwHeight) / 900; }
         function triggerChapter3Fireworks() {
-            const cx = fwWidth / 2; const targetBaseY = fwHeight * 0.25; const spreadW = fwWidth * 0.6; const startX = cx - spreadW / 2; const stepX = spreadW / 4; 
-            for(let i=0; i<5; i++) { const targetX = startX + stepX * i; const targetY = targetBaseY + random(-50, 50) * fwScale; const depth = random(0.8, 1.2); setTimeout(() => { particles.push(new Shell(cx, fwHeight, targetX, targetY, 'willow', depth)); }, i * 200); }
-            setTimeout(() => { const groundY = fwHeight; for(let i=0; i<6; i++) { const x = (i < 3) ? (fwWidth * 0.15 + i*30*fwScale) : (fwWidth * 0.85 - (i-3)*30*fwScale); const tx = x + (i<3 ? 50 : -50)*fwScale; setTimeout(() => { particles.push(new Shell(x, groundY, tx, fwHeight*0.6, 'comet', 0.8)); }, i * 150); } }, 1200);
-            setTimeout(() => { for(let i=0; i<3; i++) { const x = cx + (i-1)*200*fwScale; setTimeout(() => { particles.push(new Shell(x, fwHeight, x, fwHeight*0.3, 'willow', 1.0)); }, i*300); } }, 2000);
+            const cx = fwWidth / 2; const targetBaseY = fwHeight * 0.25; 
+            // Wave 1: 5 -> 3
+            const spreadW = fwWidth * 0.6; const startX = cx - spreadW / 2; const stepX = spreadW / 2; 
+            for(let i=0; i<3; i++) { const targetX = startX + stepX * i; const targetY = targetBaseY + random(-50, 50) * fwScale; const depth = random(0.8, 1.2); setTimeout(() => { particles.push(new Shell(cx, fwHeight, targetX, targetY, 'willow', depth)); }, i * 200); }
+            // Wave 2: 6 -> 2
+            setTimeout(() => { const groundY = fwHeight; for(let i=0; i<2; i++) { const x = (i < 1) ? (fwWidth * 0.15) : (fwWidth * 0.85); const tx = x + (i<1 ? 50 : -50)*fwScale; setTimeout(() => { particles.push(new Shell(x, groundY, tx, fwHeight*0.6, 'comet', 0.8)); }, i * 150); } }, 1200);
+            // Wave 3: 3 -> 1
+            setTimeout(() => { const x = cx; setTimeout(() => { particles.push(new Shell(x, fwHeight, x, fwHeight*0.3, 'willow', 1.0)); }, 0); }, 2000);
         }
 
         // ==========================================
